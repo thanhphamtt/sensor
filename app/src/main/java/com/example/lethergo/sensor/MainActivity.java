@@ -47,7 +47,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         graph.addSeries(seriesX);
         graph.addSeries(seriesY);
         graph.addSeries(seriesZ);
-
+        graph.getViewport().setXAxisBoundsManual(true);
+        graph.getViewport().setMinX(0);
+        graph.getViewport().setMaxX(40);
 
     }
     @Override
@@ -70,13 +72,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         listY.add(new DataPoint(dataCount,event.values[1]));
         listZ.add(new DataPoint(dataCount,event.values[2]));
         ++dataCount;
-        if(dataCount>100){
-            listX.remove(0);
-            listY.remove(0);
-            listZ.remove(0);
-            graph.getViewport().setMinX(dataCount-100);
-            graph.getViewport().setMaxX(100);
-        }
+//        if(dataCount>100){
+//            listX.remove(0);
+//            listY.remove(0);
+//            listZ.remove(0);
+//            graph.getViewport().setMinX(dataCount-100);
+//            graph.getViewport().setMaxX(100);
+//        }
 
 
 
