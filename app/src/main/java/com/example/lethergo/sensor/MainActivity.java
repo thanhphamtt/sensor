@@ -13,6 +13,11 @@ import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
+import java.io.DataInputStream;
+import java.io.DataOutput;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,11 +34,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private final Handler mHandler = new Handler();
     private Runnable mTimer1;
     int dataCount = 1;
+    Socket client;
     int cnt =1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         this.sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         assert this.sensorManager != null;
         this.sensor = this.sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -44,6 +51,19 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         listY = new ArrayList<DataPoint>();
         listZ = new ArrayList<DataPoint>();
         graph = (GraphView) findViewById(R.id.graph);
+        try {
+            client = new Socket("192.168.1.5", 1910);
+            DataOutputStream out = new DataOutputStream(client.getOutputStream());
+            out.writeDouble(0.1);
+            out.writeDouble(0.2);
+            out.writeDouble(0.3);
+            System.out.println("dmm");
+            DataInputStream in = new DataInputStream(client.getInputStream());
+            System.out.println(in.readUTF());
+            client.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         graph.addSeries(seriesX);
         graph.addSeries(seriesY);
         graph.addSeries(seriesZ);
@@ -71,6 +91,22 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         listX.add(new DataPoint(dataCount,event.values[0]));
         listY.add(new DataPoint(dataCount,event.values[1]));
         listZ.add(new DataPoint(dataCount,event.values[2]));
+//        if(listX.size() %100 ==0) {
+//
+//            try {
+//                client = new Socket("localhost", 1910);
+//                DataOutputStream out = new DataOutputStream(client.getOutputStream());
+//                out.writeDouble(event.values[0]);
+//                out.writeDouble(event.values[1]);
+//                out.writeDouble(event.values[2]);
+//                System.out.println(event.values[0] + " " + event.values[1] + " " + event.values[2]);
+//                DataInputStream in = new DataInputStream(client.getInputStream());
+//                System.out.println(in.readUTF());
+//                client.close();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
         ++dataCount;
 //        if(dataCount>100){
 //            listX.remove(0);
